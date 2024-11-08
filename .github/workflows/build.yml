@@ -1,9 +1,9 @@
 name: Build
 
 on:
+  # build on each push as we build the stremio-web for staging
+  # on gh-pages to test.
   push:
-    branches:
-      - development
     tags-ignore:
       - '**'
   pull_request:
