@@ -1,5 +1,3 @@
-// Copyright (C) 2017-2023 Smart code 203358507
-
 const React = require('react');
 const PropTypes = require('prop-types');
 const ModalDialog = require('stremio/common/ModalDialog');
@@ -135,7 +133,57 @@ const AddonDetailsModal = ({ transportUrl, onCloseRequest }) => {
                 }
                 :
                 null;
-        return configureButton && toggleButton ? [cancelButton, configureButton, toggleButton] : configureButton ? [cancelButton, configureButton] : toggleButton ? [cancelButton, toggleButton] : [cancelButton];
+        const disableButton = addonDetails.localAddon !== null && !addonDetails.localAddon.disabled ?
+            {
+                className: styles['disable-button'],
+                label: 'Disable',
+                props: {
+                    onClick: (event) => {
+                        core.transport.dispatch({
+                            action: 'Ctx',
+                            args: {
+                                action: 'DisableAddon',
+                                args: addonDetails.localAddon
+                            }
+                        });
+                        if (typeof onCloseRequest === 'function') {
+                            onCloseRequest({
+                                type: 'disable',
+                                reactEvent: event,
+                                nativeEvent: event.nativeEvent
+                            });
+                        }
+                    }
+                }
+            }
+            :
+            null;
+        const enableButton = addonDetails.localAddon !== null && addonDetails.localAddon.disabled ?
+            {
+                className: styles['enable-button'],
+                label: 'Enable',
+                props: {
+                    onClick: (event) => {
+                        core.transport.dispatch({
+                            action: 'Ctx',
+                            args: {
+                                action: 'EnableAddon',
+                                args: addonDetails.localAddon
+                            }
+                        });
+                        if (typeof onCloseRequest === 'function') {
+                            onCloseRequest({
+                                type: 'enable',
+                                reactEvent: event,
+                                nativeEvent: event.nativeEvent
+                            });
+                        }
+                    }
+                }
+            }
+            :
+            null;
+        return [cancelButton, configureButton, toggleButton, disableButton, enableButton].filter(Boolean);
     }, [addonDetails, onCloseRequest]);
     const modalBackground = React.useMemo(() => {
         return addonDetails.remoteAddon?.content.type === 'Ready' ? addonDetails.remoteAddon.content.content.manifest.background : null;

@@ -1,5 +1,3 @@
-// Copyright (C) 2017-2023 Smart code 203358507
-
 const EventEmitter = require('eventemitter3');
 const CoreTransport = require('./CoreTransport');
 
@@ -86,6 +84,30 @@ function Core(args) {
     };
     this.off = function(name, listener) {
         events.off(name, listener);
+    };
+
+    this.disableAddon = function(addon) {
+        if (transport !== null) {
+            transport.dispatch({
+                action: 'Ctx',
+                args: {
+                    action: 'DisableAddon',
+                    args: addon
+                }
+            });
+        }
+    };
+
+    this.enableAddon = function(addon) {
+        if (transport !== null) {
+            transport.dispatch({
+                action: 'Ctx',
+                args: {
+                    action: 'EnableAddon',
+                    args: addon
+                }
+            });
+        }
     };
 }
 

@@ -1,5 +1,3 @@
-// Copyright (C) 2017-2023 Smart code 203358507
-
 const React = require('react');
 const PropTypes = require('prop-types');
 const classnames = require('classnames');
@@ -8,7 +6,7 @@ const { default: Icon } = require('@stremio/stremio-icons/react');
 const { Button, Image } = require('stremio/common');
 const styles = require('./styles');
 
-const Addon = ({ className, id, name, version, logo, description, types, behaviorHints, installed, onToggle, onConfigure, onShare, dataset }) => {
+const Addon = ({ className, id, name, version, logo, description, types, behaviorHints, installed, disabled, onToggle, onConfigure, onShare, dataset }) => {
     const { t } = useTranslation();
     const toggleButtonOnClick = React.useCallback((event) => {
         if (typeof onToggle === 'function') {
@@ -111,6 +109,22 @@ const Addon = ({ className, id, name, version, logo, description, types, behavio
                     >
                         <div className={styles['label']}>{installed ? t('ADDON_UNINSTALL') : behaviorHints.configurationRequired ? t('ADDON_CONFIGURE') : t('ADDON_INSTALL')}</div>
                     </Button>
+                    {
+                        installed && !disabled ?
+                            <Button className={styles['disable-button-container']} title={t('ADDON_DISABLE')} tabIndex={-1} onClick={toggleButtonOnClick}>
+                                <div className={styles['label']}>{t('ADDON_DISABLE')}</div>
+                            </Button>
+                            :
+                            null
+                    }
+                    {
+                        installed && disabled ?
+                            <Button className={styles['enable-button-container']} title={t('ADDON_ENABLE')} tabIndex={-1} onClick={toggleButtonOnClick}>
+                                <div className={styles['label']}>{t('ADDON_ENABLE')}</div>
+                            </Button>
+                            :
+                            null
+                    }
                 </div>
                 <Button className={styles['share-button-container']} title={t('SHARE_ADDON')} tabIndex={-1} onClick={shareButtonOnClick}>
                     <Icon className={styles['icon']} name={'share'} />
@@ -136,6 +150,7 @@ Addon.propTypes = {
         p2p: PropTypes.bool,
     }),
     installed: PropTypes.bool,
+    disabled: PropTypes.bool,
     onToggle: PropTypes.func,
     onConfigure: PropTypes.func,
     onShare: PropTypes.func,
